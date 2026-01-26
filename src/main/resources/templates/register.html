@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>注册 - LogSage</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+	<div class="container">
+		<h1>LogSage - AI 日志分析助手</h1>
+		
+		<div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+		<h2>注册</h2>
+		<form th:action="@{/register/submit}" method="post">
+			<div class="form-group">
+				<label for="email">邮箱：</label>
+				<input type="email" id="email" name="email" required>
+			</div>
+			<div class="form-group">
+				<label for="password">密码（至少 6 个字符）：</label>
+				<input type="password" id="password" name="password" required minlength="6">
+			</div>
+			<button type="submit" class="btn btn-success">注册</button>
+		</form>
+
+		<p style="margin-top: 20px;">
+			<a th:href="@{/login}">已有账号？立即登录</a>
+		</p>
+	</div>
+</body>
+</html>

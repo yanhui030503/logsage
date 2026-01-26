@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>错误 - LogSage</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+	<div class="container">
+		<div class="nav">
+			<span>LogSage</span>
+			<div>
+				<a th:href="@{/analyze}">分析</a>
+				<a th:href="@{/history}">历史</a>
+				<a th:href="@{/settings}">设置</a>
+				<a th:href="@{/logout}">退出</a>
+			</div>
+		</div>
+
+		<h1>错误</h1>
+		<div class="alert alert-error" th:text="${error}">发生错误</div>
+		<p><a th:href="@{/history}" class="btn">返回历史</a></p>
+	</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>待办事项</title>
+</head>
+<body>
+	<h1>待办事项</h1>
+	
+	<!-- 新增 todo 表单 -->
+	<form th:action="@{/todos/add}" method="post">
+		<input type="text" name="text" placeholder="输入待办事项" required>
+		<button type="submit">添加</button>
+	</form>
+	
+	<hr>
+	
+	<!-- todo 列表 -->
+	<ul th:if="${!todos.isEmpty()}">
+		<li th:each="todo : ${todos}">
+			<span th:text="${todo.text}"></span>
+			<form th:action="@{/todos/delete}" method="post" style="display: inline;">
+				<input type="hidden" name="id" th:value="${todo.id}">
+				<button type="submit">删除</button>
+			</form>
+		</li>
+	</ul>
+	<p th:if="${todos.isEmpty()}">暂无待办事项</p>
+	
+	<hr>
+	<p><a th:href="@{/}">返回首页</a></p>
+</body>
+</html>

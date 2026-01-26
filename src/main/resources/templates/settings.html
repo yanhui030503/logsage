@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>设置 - LogSage</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+	<div class="container">
+		<div class="nav">
+			<span>LogSage</span>
+			<div>
+				<a th:href="@{/analyze}">分析</a>
+				<a th:href="@{/history}">历史</a>
+				<a th:href="@{/settings}">设置</a>
+				<a th:href="@{/logout}">退出</a>
+			</div>
+		</div>
+
+		<h1>设置</h1>
+
+		<div th:if="${param.updated}" class="alert alert-success">设置已更新</div>
+
+		<!-- 每日额度信息 -->
+		<div class="usage-info">
+			<h3>每日额度</h3>
+			<p>
+				<strong>限额：</strong><span th:text="${usage.limit}">20</span> 次/天<br>
+				<strong>今日已用：</strong><span th:text="${usage.used}">0</span> 次<br>
+				<strong>剩余次数：</strong><span th:text="${usage.remaining}">20</span> 次
+			</p>
+		</div>
+
+		<!-- 默认选项设置 -->
+		<h2>默认选项</h2>
+		<form th:action="@{/settings/update}" method="post">
+			<div class="form-group">
+				<label>
+					<input type="checkbox" name="defaultSanitize" value="true" 
+						th:checked="${user.defaultSanitize != null ? user.defaultSanitize : true}">
+						默认启用自动脱敏
+				</label>
+			</div>
+			<div class="form-group">
+				<label for="defaultDepth">默认输出深度：</label>
+				<select id="defaultDepth" name="defaultDepth">
+					<option value="FAST" th:selected="${user.defaultDepth == 'FAST'}">FAST</option>
+					<option value="DEEP" th:selected="${user.defaultDepth == 'DEEP'}">DEEP</option>
+				</select>
+			</div>
+			<button type="submit" class="btn btn-success">保存设置</button>
+		</form>
+	</div>
+</body>
+</html>

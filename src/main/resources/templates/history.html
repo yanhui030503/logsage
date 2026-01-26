@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>历史记录 - LogSage</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+	<div class="container">
+		<div class="nav">
+			<span>LogSage</span>
+			<div>
+				<a th:href="@{/analyze}">分析</a>
+				<a th:href="@{/history}">历史</a>
+				<a th:href="@{/settings}">设置</a>
+				<a th:href="@{/logout}">退出</a>
+			</div>
+		</div>
+
+		<h1>分析历史</h1>
+
+		<div th:if="${history == null || history.isEmpty()}">
+			<p>暂无分析记录</p>
+			<p><a th:href="@{/analyze}" class="btn">开始分析</a></p>
+		</div>
+
+		<ul th:if="${history != null && !history.isEmpty()}" class="history-list">
+			<li th:each="item : ${history}" class="history-item">
+				<a th:href="@{/report/{id}(id=${item.id})}" th:text="${item.title}">报告标题</a>
+				<div class="history-meta">
+					<span th:text="${item.logType}">类型</span> | 
+					<span th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}">时间</span>
+				</div>
+			</li>
+		</ul>
+	</div>
+</body>
+</html>

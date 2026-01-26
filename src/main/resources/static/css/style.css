@@ -1,0 +1,277 @@
+/* LogSage 基础样式 */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	line-height: 1.6;
+	color: #333;
+	background-color: #f5f5f5;
+	padding: 20px;
+}
+
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	background: white;
+	padding: 30px;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+	color: #2c3e50;
+	margin-bottom: 20px;
+}
+
+h2 {
+	color: #34495e;
+	margin-top: 30px;
+	margin-bottom: 15px;
+}
+
+h3 {
+	color: #555;
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+/* 导航栏 */
+.nav {
+	background: #2c3e50;
+	color: white;
+	padding: 15px 30px;
+	margin: -30px -30px 30px -30px;
+	border-radius: 8px 8px 0 0;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.nav a {
+	color: white;
+	text-decoration: none;
+	margin-left: 20px;
+}
+
+.nav a:hover {
+	text-decoration: underline;
+}
+
+/* 表单样式 */
+.form-group {
+	margin-bottom: 20px;
+}
+
+.form-group label {
+	display: block;
+	margin-bottom: 5px;
+	font-weight: 500;
+	color: #555;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group textarea,
+.form-group select {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	font-size: 14px;
+}
+
+.form-group textarea {
+	min-height: 200px;
+	resize: vertical;
+	font-family: monospace;
+}
+
+.form-group input[type="checkbox"] {
+	width: auto;
+	margin-right: 5px;
+}
+
+/* 按钮样式 */
+.btn {
+	display: inline-block;
+	padding: 10px 20px;
+	background: #3498db;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 14px;
+	text-decoration: none;
+}
+
+.btn:hover {
+	background: #2980b9;
+}
+
+.btn-success {
+	background: #27ae60;
+}
+
+.btn-success:hover {
+	background: #229954;
+}
+
+.btn-danger {
+	background: #e74c3c;
+}
+
+.btn-danger:hover {
+	background: #c0392b;
+}
+
+.btn-secondary {
+	background: #95a5a6;
+}
+
+.btn-secondary:hover {
+	background: #7f8c8d;
+}
+
+/* 消息提示 */
+.alert {
+	padding: 15px;
+	margin-bottom: 20px;
+	border-radius: 4px;
+}
+
+.alert-error {
+	background: #fee;
+	color: #c33;
+	border: 1px solid #fcc;
+}
+
+.alert-success {
+	background: #efe;
+	color: #3c3;
+	border: 1px solid #cfc;
+}
+
+.alert-info {
+	background: #eef;
+	color: #33c;
+	border: 1px solid #ccf;
+}
+
+/* 分析结果样式 */
+.analysis-result {
+	background: #f9f9f9;
+	padding: 20px;
+	border-radius: 4px;
+	margin-top: 20px;
+	border-left: 4px solid #3498db;
+}
+
+.analysis-result h3 {
+	margin-top: 0;
+}
+
+.cause-item,
+.step-item,
+.fix-item {
+	background: white;
+	padding: 15px;
+	margin-bottom: 10px;
+	border-radius: 4px;
+	border-left: 3px solid #3498db;
+}
+
+.confidence {
+	display: inline-block;
+	padding: 3px 8px;
+	background: #ecf0f1;
+	border-radius: 3px;
+	font-size: 12px;
+	margin-left: 10px;
+}
+
+.risk {
+	display: inline-block;
+	padding: 3px 8px;
+	border-radius: 3px;
+	font-size: 12px;
+	margin-left: 10px;
+}
+
+.risk-low {
+	background: #d4edda;
+	color: #155724;
+}
+
+.risk-medium {
+	background: #fff3cd;
+	color: #856404;
+}
+
+.risk-high {
+	background: #f8d7da;
+	color: #721c24;
+}
+
+/* 历史记录列表 */
+.history-list {
+	list-style: none;
+}
+
+.history-item {
+	background: #f9f9f9;
+	padding: 15px;
+	margin-bottom: 10px;
+	border-radius: 4px;
+	border-left: 4px solid #3498db;
+}
+
+.history-item a {
+	color: #3498db;
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.history-item a:hover {
+	text-decoration: underline;
+}
+
+.history-meta {
+	color: #777;
+	font-size: 14px;
+	margin-top: 5px;
+}
+
+/* 使用情况显示 */
+.usage-info {
+	background: #e8f4f8;
+	padding: 15px;
+	border-radius: 4px;
+	margin-bottom: 20px;
+}
+
+.usage-info strong {
+	color: #2c3e50;
+}
+
+/* 两列布局 */
+.two-column {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 20px;
+}
+
+@media (max-width: 768px) {
+	.two-column {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* 复制按钮 */
+.copy-btn {
+	margin-top: 10px;
+}
