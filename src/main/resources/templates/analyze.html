@@ -81,27 +81,65 @@
 		<div th:if="${analysis}" class="analysis-result">
 			<h2>分析结果</h2>
 
-			<div th:if="${analysis.tldr}">
-				<h3>TL;DR</h3>
-				<p th:text="${analysis.tldr}"></p>
+			<!-- TL;DR 卡片 -->
+			<div th:if="${analysis.tldr}" class="card card-tldr">
+				<h3 class="card-title">TL;DR</h3>
+				<p class="card-content" th:text="${analysis.tldr}"></p>
 			</div>
 
+			<!-- Top Causes 卡片列表 -->
 			<div th:if="${analysis.topCauses}">
-				<h3>Top 3 可能原因</h3>
-				<div th:each="cause : ${analysis.topCauses}" class="cause-item">
-					<strong th:text="${cause.cause}">原因</strong>
-					<span class="confidence" th:text="'置信度: ' + ${#numbers.formatDecimal(cause.confidence, 0, 2)}">置信度</span>
-					<p style="margin-top: 5px;" th:text="${cause.evidence}">证据</p>
+				<h3 style="margin-top: 30px; margin-bottom: 15px;">Top 3 可能原因</h3>
+				<div th:each="cause, iterStat : ${analysis.topCauses}" class="card card-cause">
+					<div class="card-header">
+						<strong class="card-title" th:text="${cause.cause}">原因</strong>
+					</div>
+					<div class="card-content">
+						<!-- 置信度进度条 -->
+						<div class="confidence-container">
+							<div class="confidence-label">
+								<span>置信度: </span>
+								<span th:text="${#numbers.formatDecimal(cause.confidence, 0, 2)}">0.00</span>
+							</div>
+							<div class="progress-bar">
+								<div class="progress-fill" 
+									th:style="'width: ' + ${cause.confidence * 100} + '%'"
+									th:attr="data-confidence=${#numbers.formatDecimal(cause.confidence, 0, 2)}">
+								</div>
+							</div>
+						</div>
+						<p class="evidence-text" th:text="${cause.evidence}">证据</p>
+					</div>
 				</div>
 			</div>
 
+			<!-- Verification Steps 可勾选清单 -->
 			<div th:if="${analysis.verificationSteps}">
-				<h3>最短验证步骤</h3>
-				<div th:each="step : ${analysis.verificationSteps}" class="step-item">
-					<strong th:text="${step.step}">步骤</strong>
-					<p style="margin-top: 5px;" th:text="${step.why}">原因</p>
-					<code style="display: block; margin-top: 5px; padding: 5px; background: #f0f0f0; border-radius: 3px;" 
-						th:text="${step.command}">命令</code>
+				<h3 style="margin-top: 30px; margin-bottom: 15px;">最短验证步骤</h3>
+				<div class="verification-checklist" th:attr="data-analysis-id=${analysis.id}">
+					<div th:each="step, iterStat : ${analysis.verificationSteps}" 
+						class="card card-step checklist-item"
+						th:attr="data-step-index=${iterStat.index}">
+						<div class="checklist-header">
+							<input type="checkbox" 
+								class="step-checkbox"
+								th:id="'step-' + ${analysis.id} + '-' + ${iterStat.index}"
+								th:attr="data-step-id=${analysis.id + '-' + iterStat.index}">
+							<label class="checklist-label" 
+								th:for="'step-' + ${analysis.id} + '-' + ${iterStat.index}"
+								th:text="${step.step}">步骤</label>
+						</div>
+						<div class="card-content">
+							<p class="step-why" th:text="${step.why}">原因</p>
+							<div class="command-container">
+								<code class="command-code" th:text="${step.command}">命令</code>
+								<button class="copy-btn-small" 
+									th:attr="data-command=${step.command}"
+									onclick="copyCommand(this)"
+									title="复制命令">📋</button>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 
@@ -141,6 +179,58 @@
 				charCount.textContent = textarea.value.length;
 			}
 		}
+
+		// 复制命令功能
+		function copyCommand(button) {
+			const command = button.getAttribute('data-command');
+			if (command) {
+				navigator.clipboard.writeText(command).then(function() {
+					// 临时改变按钮文本显示复制成功
+					const originalText = button.textContent;
+					button.textContent = '✓';
+					button.style.background = '#27ae60';
+					setTimeout(function() {
+						button.textContent = originalText;
+						button.style.background = '';
+					}, 1000);
+				}).catch(function(err) {
+					alert('复制失败: ' + err);
+				});
+			}
+		}
+
+		// Checklist 状态保存和恢复（使用 localStorage）
+		document.addEventListener('DOMContentLoaded', function() {
+			// 恢复已保存的勾选状态
+			const checklistItems = document.querySelectorAll('.checklist-item');
+			checklistItems.forEach(function(item) {
+				const checkbox = item.querySelector('.step-checkbox');
+				if (checkbox) {
+					const stepId = checkbox.getAttribute('data-step-id');
+					const saved = localStorage.getItem('checklist_' + stepId);
+					if (saved === 'true') {
+						checkbox.checked = true;
+						item.classList.add('checked');
+					}
+				}
+			});
+
+			// 监听勾选状态变化
+			const checkboxes = document.querySelectorAll('.step-checkbox');
+			checkboxes.forEach(function(checkbox) {
+				checkbox.addEventListener('change', function() {
+					const stepId = this.getAttribute('data-step-id');
+					const item = this.closest('.checklist-item');
+					if (this.checked) {
+						localStorage.setItem('checklist_' + stepId, 'true');
+						item.classList.add('checked');
+					} else {
+						localStorage.removeItem('checklist_' + stepId);
+						item.classList.remove('checked');
+					}
+				});
+			});
+		});
 	</script>
 </body>
 </html>

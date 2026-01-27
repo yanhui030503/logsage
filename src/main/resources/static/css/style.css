@@ -175,6 +175,180 @@ h3 {
 	margin-top: 0;
 }
 
+/* 卡片样式 */
+.card {
+	background: white;
+	padding: 20px;
+	margin-bottom: 15px;
+	border-radius: 8px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	border: 1px solid #e0e0e0;
+	transition: box-shadow 0.2s;
+}
+
+.card:hover {
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+	color: #2c3e50;
+	font-size: 18px;
+	margin-bottom: 10px;
+	display: block;
+}
+
+.card-content {
+	color: #555;
+	line-height: 1.6;
+}
+
+/* TL;DR 卡片特殊样式 */
+.card-tldr {
+	border-left: 4px solid #3498db;
+}
+
+/* Top Causes 卡片样式 */
+.card-cause {
+	border-left: 4px solid #e74c3c;
+}
+
+.card-header {
+	margin-bottom: 15px;
+}
+
+/* 置信度进度条 */
+.confidence-container {
+	margin-bottom: 15px;
+}
+
+.confidence-label {
+	font-size: 14px;
+	color: #555;
+	margin-bottom: 8px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.confidence-label span:last-child {
+	font-weight: 600;
+	color: #2c3e50;
+}
+
+.progress-bar {
+	width: 100%;
+	height: 24px;
+	background: #ecf0f1;
+	border-radius: 12px;
+	overflow: hidden;
+	position: relative;
+}
+
+.progress-fill {
+	height: 100%;
+	background: linear-gradient(90deg, #3498db 0%, #2980b9 100%);
+	border-radius: 12px;
+	transition: width 0.3s ease;
+	min-width: 2%;
+}
+
+.evidence-text {
+	margin-top: 15px;
+	color: #666;
+	font-size: 14px;
+	line-height: 1.6;
+}
+
+/* Verification Steps 可勾选清单样式 */
+.verification-checklist {
+	margin-top: 10px;
+}
+
+.card-step {
+	border-left: 4px solid #27ae60;
+	position: relative;
+}
+
+.checklist-item.checked {
+	background: #f0f9f4;
+	border-left-color: #27ae60;
+}
+
+.checklist-header {
+	display: flex;
+	align-items: center;
+	margin-bottom: 15px;
+}
+
+.step-checkbox {
+	width: 20px;
+	height: 20px;
+	margin-right: 12px;
+	cursor: pointer;
+	accent-color: #27ae60;
+}
+
+.checklist-label {
+	font-size: 16px;
+	font-weight: 600;
+	color: #2c3e50;
+	cursor: pointer;
+	flex: 1;
+	margin: 0;
+}
+
+.step-why {
+	margin-bottom: 12px;
+	color: #666;
+	font-size: 14px;
+}
+
+/* 命令容器和复制按钮 */
+.command-container {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-top: 10px;
+	background: #f8f9fa;
+	padding: 12px;
+	border-radius: 6px;
+	border: 1px solid #e0e0e0;
+}
+
+.command-code {
+	flex: 1;
+	padding: 8px;
+	background: #fff;
+	border-radius: 4px;
+	font-family: 'Courier New', monospace;
+	font-size: 13px;
+	color: #2c3e50;
+	border: 1px solid #ddd;
+	word-break: break-all;
+}
+
+.copy-btn-small {
+	background: #3498db;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	padding: 8px 12px;
+	cursor: pointer;
+	font-size: 14px;
+	white-space: nowrap;
+	transition: background 0.2s;
+	flex-shrink: 0;
+}
+
+.copy-btn-small:hover {
+	background: #2980b9;
+}
+
+.copy-btn-small:active {
+	background: #1f6391;
+}
+
+/* 保留旧样式以兼容其他部分 */
 .cause-item,
 .step-item,
 .fix-item {
