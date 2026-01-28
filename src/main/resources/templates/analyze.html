@@ -74,6 +74,15 @@
 				<small>当前字符数：<span id="charCount">0</span> / 8000</small>
 			</div>
 
+			<div class="form-group">
+				<label for="tried">已尝试的排查步骤（可选）：</label>
+				<textarea id="tried" name="tried" 
+					maxlength="2000" 
+					placeholder="请描述您已经尝试过的排查步骤，例如：检查了配置文件、重启了服务等..." 
+					th:value="${tried}"></textarea>
+				<small>帮助 AI 避免重复建议已尝试的步骤</small>
+			</div>
+
 			<button type="submit" class="btn btn-success">开始分析</button>
 		</form>
 
@@ -161,6 +170,7 @@
 			<form th:action="@{/analyze}" method="post" style="margin-top: 20px;">
 				<input type="hidden" name="rawLog" th:value="${rawLog}">
 				<input type="hidden" name="logType" th:value="${logType}">
+				<input type="hidden" name="tried" th:value="${tried}">
 				<input type="hidden" name="saveAsReport" value="true">
 				<button type="submit" class="btn">保存为报告</button>
 			</form>

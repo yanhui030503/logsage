@@ -46,6 +46,9 @@ public class LogAnalysis {
 	@Column(name = "options", columnDefinition = "TEXT")
 	private String options; // 分析选项（JSON 格式）
 
+	@Column(name = "tried", columnDefinition = "TEXT")
+	private String tried; // 用户已尝试过的排查步骤
+
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 
@@ -148,6 +151,14 @@ public class LogAnalysis {
 
 	public void setOptions(String options) {
 		this.options = options;
+	}
+
+	public String getTried() {
+		return tried;
+	}
+
+	public void setTried(String tried) {
+		this.tried = tried;
 	}
 
 	public LocalDateTime getCreatedAt() {

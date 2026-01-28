@@ -64,6 +64,7 @@ public class LogAnalysisController {
 			@RequestParam(required = false, defaultValue = "true") boolean sanitize,
 			@RequestParam(required = false, defaultValue = "true") boolean generateActionList,
 			@RequestParam(required = false, defaultValue = "FAST") String depth,
+			@RequestParam(required = false) String tried,
 			@RequestParam(required = false) String saveAsReport,
 			Model model) {
 		User user = getCurrentUser();
@@ -81,7 +82,7 @@ public class LogAnalysisController {
 
 			// 执行分析
 			LogAnalysis analysis = logAnalysisService.analyzeLog(user.getId(), rawLog, logType, sanitize,
-					generateActionList, depth);
+					generateActionList, depth, tried);
 
 			// 解析 JSON 字段
 			Map<String, Object> analysisData = new HashMap<>();
@@ -100,6 +101,7 @@ public class LogAnalysisController {
 			model.addAttribute("analysis", analysisData);
 			model.addAttribute("rawLog", rawLog);
 			model.addAttribute("logType", logType);
+			model.addAttribute("tried", tried);
 
 			// 如果用户选择保存为报告，重定向到报告详情页
 			if ("true".equals(saveAsReport)) {

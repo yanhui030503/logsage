@@ -13,7 +13,7 @@ public class FakeAiClient {
 	/**
 	 * 分析日志并返回结构化结果
 	 */
-	public AnalysisResult analyzeLog(String sanitizedLog, String logType, boolean generateActionList, String depth) {
+	public AnalysisResult analyzeLog(String sanitizedLog, String logType, boolean generateActionList, String depth, String tried) {
 		AnalysisResult result = new AnalysisResult();
 
 		// 生成 TL;DR
@@ -24,11 +24,15 @@ public class FakeAiClient {
 
 		// 生成验证步骤
 		if (generateActionList) {
-			result.setVerificationSteps(generateVerificationSteps(sanitizedLog, logType));
+			List<Map<String, Object>> steps = generateVerificationSteps(sanitizedLog, logType);
+			// 过滤掉用户已尝试的步骤
+			result.setVerificationSteps(filterTriedSteps(steps, tried));
 		}
 
 		// 生成建议修复
-		result.setSuggestedFixes(generateSuggestedFixes(sanitizedLog, logType, depth));
+		List<Map<String, Object>> fixes = generateSuggestedFixes(sanitizedLog, logType, depth);
+		// 过滤掉用户已尝试的修复
+		result.setSuggestedFixes(filterTriedFixes(fixes, tried));
 
 		// 生成需要更多信息
 		result.setNeedMoreInfo(generateNeedMoreInfo(sanitizedLog, logType));
@@ -181,6 +185,103 @@ public class FakeAiClient {
 			return "日志信息较少，建议提供更多上下文信息，包括：完整的异常堆栈、相关配置、触发操作等。";
 		}
 		return "如果问题持续存在，建议提供：系统环境信息、相关代码片段、完整的错误日志。";
+	}
+
+	/**
+	 * 过滤掉用户已尝试的验证步骤
+	 * 使用简单的关键词匹配规则
+	 */
+	private List<Map<String, Object>> filterTriedSteps(List<Map<String, Object>> steps, String tried) {
+		if (tried == null || tried.trim().isEmpty()) {
+			return steps;
+		}
+
+		String triedLower = tried.toLowerCase();
+		List<Map<String, Object>> filtered = new ArrayList<>();
+
+		for (Map<String, Object> step : steps) {
+			String stepText = (String) step.get("step");
+			String commandText = (String) step.get("command");
+			
+			// 检查步骤描述或命令是否与 tried 内容相似
+			boolean isTried = false;
+			if (stepText != null) {
+				String stepLower = stepText.toLowerCase();
+				// 提取关键词进行匹配
+				if (containsSimilarKeywords(stepLower, triedLower)) {
+					isTried = true;
+				}
+			}
+			if (!isTried && commandText != null) {
+				String commandLower = commandText.toLowerCase();
+				if (containsSimilarKeywords(commandLower, triedLower)) {
+					isTried = true;
+				}
+			}
+
+			// 如果未尝试过，则保留
+			if (!isTried) {
+				filtered.add(step);
+			}
+		}
+
+		return filtered.isEmpty() ? steps : filtered; // 如果全部过滤掉，返回原始列表
+	}
+
+	/**
+	 * 过滤掉用户已尝试的修复建议
+	 */
+	private List<Map<String, Object>> filterTriedFixes(List<Map<String, Object>> fixes, String tried) {
+		if (tried == null || tried.trim().isEmpty()) {
+			return fixes;
+		}
+
+		String triedLower = tried.toLowerCase();
+		List<Map<String, Object>> filtered = new ArrayList<>();
+
+		for (Map<String, Object> fix : fixes) {
+			String fixText = (String) fix.get("fix");
+			
+			if (fixText != null) {
+				String fixLower = fixText.toLowerCase();
+				// 检查修复建议是否与 tried 内容相似
+				if (!containsSimilarKeywords(fixLower, triedLower)) {
+					filtered.add(fix);
+				}
+			} else {
+				filtered.add(fix);
+			}
+		}
+
+		return filtered.isEmpty() ? fixes : filtered; // 如果全部过滤掉，返回原始列表
+	}
+
+	/**
+	 * 简单的关键词匹配：检查两个文本是否包含相似的关键词
+	 * 提取常见的关键词（如：检查、重启、配置、日志等）进行匹配
+	 */
+	private boolean containsSimilarKeywords(String text1, String text2) {
+		// 常见的关键词列表
+		String[] keywords = {"检查", "重启", "配置", "日志", "断点", "变量", "异常", "堆栈", 
+			"check", "restart", "config", "log", "breakpoint", "variable", "exception", "stack",
+			"空值", "null", "依赖", "dependency", "bean", "扫描", "scan"};
+		
+		// 检查 text1 中的关键词是否在 text2 中出现
+		for (String keyword : keywords) {
+			if (text1.contains(keyword) && text2.contains(keyword)) {
+				return true;
+			}
+		}
+		
+		// 如果 text1 和 text2 有较长的公共子串（长度 >= 5），也认为相似
+		for (int i = 0; i <= text1.length() - 5; i++) {
+			String substring = text1.substring(i, Math.min(i + 5, text1.length()));
+			if (text2.contains(substring)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	/**

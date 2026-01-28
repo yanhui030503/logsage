@@ -110,7 +110,7 @@ public class LogAnalysisService {
 	 */
 	@Transactional
 	public LogAnalysis analyzeLog(Long userId, String rawLog, String logType, boolean sanitize,
-			boolean generateActionList, String depth) {
+			boolean generateActionList, String depth, String tried) {
 		// 检查输入长度
 		if (rawLog != null && rawLog.length() > 8000) {
 			throw new RuntimeException("日志长度超过 8000 字符限制");
@@ -136,19 +136,23 @@ public class LogAnalysisService {
 			optionsJson = "{}";
 		}
 
-		// 检查缓存
-		String logHash = calculateLogHash(sanitizedLog, logType, optionsJson);
-		Optional<AnalysisCache> cache = analysisCacheRepository.findByUserIdAndLogHash(userId, logHash);
-		if (cache.isPresent()) {
-			// 返回缓存的分析结果
-			Long cachedAnalysisId = cache.get().getAnalysisId();
-			return logAnalysisRepository.findById(cachedAnalysisId)
-					.orElseThrow(() -> new RuntimeException("缓存的分析结果不存在"));
+		// 如果有 tried 字段，不使用缓存（因为不同的 tried 应该产生不同的结果）
+		// 检查缓存（仅当没有 tried 时）
+		Optional<AnalysisCache> cache = Optional.empty();
+		if (tried == null || tried.trim().isEmpty()) {
+			String logHash = calculateLogHash(sanitizedLog, logType, optionsJson);
+			cache = analysisCacheRepository.findByUserIdAndLogHash(userId, logHash);
+			if (cache.isPresent()) {
+				// 返回缓存的分析结果
+				Long cachedAnalysisId = cache.get().getAnalysisId();
+				return logAnalysisRepository.findById(cachedAnalysisId)
+						.orElseThrow(() -> new RuntimeException("缓存的分析结果不存在"));
+			}
 		}
 
 		// 调用 AI 分析
 		FakeAiClient.AnalysisResult aiResult = fakeAiClient.analyzeLog(sanitizedLog, logType, generateActionList,
-				depth);
+				depth, tried);
 
 		// 生成标题
 		String title = generateTitle(rawLog, logType);
@@ -170,12 +174,16 @@ public class LogAnalysisService {
 		}
 		analysis.setNeedMoreInfo(aiResult.getNeedMoreInfo());
 		analysis.setOptions(optionsJson);
+		analysis.setTried(tried != null ? tried.trim() : null);
 
 		LogAnalysis saved = logAnalysisRepository.save(analysis);
 
-		// 保存缓存
-		AnalysisCache cacheEntry = new AnalysisCache(userId, logHash, saved.getId());
-		analysisCacheRepository.save(cacheEntry);
+		// 保存缓存（仅当没有 tried 时）
+		if (tried == null || tried.trim().isEmpty()) {
+			String logHash = calculateLogHash(sanitizedLog, logType, optionsJson);
+			AnalysisCache cacheEntry = new AnalysisCache(userId, logHash, saved.getId());
+			analysisCacheRepository.save(cacheEntry);
+		}
 
 		// 更新每日使用计数
 		LocalDate today = LocalDate.now();
