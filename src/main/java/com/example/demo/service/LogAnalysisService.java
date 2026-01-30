@@ -175,6 +175,7 @@ public class LogAnalysisService {
 		analysis.setNeedMoreInfo(aiResult.getNeedMoreInfo());
 		analysis.setOptions(optionsJson);
 		analysis.setTried(tried != null ? tried.trim() : null);
+		analysis.setErrorCategory(deriveErrorCategory(sanitizedLog));
 
 		LogAnalysis saved = logAnalysisRepository.save(analysis);
 
@@ -218,8 +219,51 @@ public class LogAnalysisService {
 	}
 
 	/**
-	 * 获取用户的所有分析历史
+	 * 根据日志内容推导错误分类（用于历史筛选）
 	 */
+	public String deriveErrorCategory(String sanitizedLog) {
+		if (sanitizedLog == null) {
+			return "CONFIG";
+		}
+		String lower = sanitizedLog.toLowerCase();
+		if (lower.contains("nullpointerexception")) {
+			return "NPE";
+		}
+		if (lower.contains("nosuchbeandefinitionexception") || lower.contains("required a bean") || lower.contains("beancreationexception")) {
+			return "BEAN";
+		}
+		if (lower.contains("bindexception") || lower.contains("address already in use") || lower.contains("port 8080")) {
+			return "PORT";
+		}
+		if (lower.contains("sqlexception") || lower.contains("sqlsyntaxerrorexception") || lower.contains("jdbc")) {
+			return "SQL";
+		}
+		if (lower.contains("application.properties") || lower.contains("failed to bind properties") || lower.contains("could not resolve placeholder")) {
+			return "CONFIG";
+		}
+		return "CONFIG";
+	}
+
+	/**
+	 * 获取用户分析历史（支持搜索 q 和分类筛选 cat）
+	 */
+	public List<LogAnalysis> getHistory(Long userId, String q, String cat) {
+		boolean hasQ = q != null && !q.trim().isEmpty();
+		boolean hasCat = cat != null && !"ALL".equalsIgnoreCase(cat.trim());
+
+		if (!hasQ && !hasCat) {
+			return logAnalysisRepository.findByUserIdOrderByCreatedAtDesc(userId);
+		}
+		if (!hasQ && hasCat) {
+			return logAnalysisRepository.findByUserIdAndErrorCategoryOrderByCreatedAtDesc(userId, cat.trim());
+		}
+		if (hasQ && !hasCat) {
+			return logAnalysisRepository.searchByUserIdAndQueryOrderByCreatedAtDesc(userId, q.trim());
+		}
+		return logAnalysisRepository.searchByUserIdAndCategoryAndQueryOrderByCreatedAtDesc(userId, cat.trim(), q.trim());
+	}
+
+	/** @deprecated 使用 getHistory(userId, q, cat) */
 	public List<LogAnalysis> getUserHistory(Long userId) {
 		return logAnalysisRepository.findByUserIdOrderByCreatedAtDesc(userId);
 	}

@@ -126,14 +126,52 @@ public class LogAnalysisController {
 	}
 
 	/**
-	 * 历史记录页面
+	 * 历史记录页面（支持搜索 q、分类筛选 cat）
 	 */
 	@GetMapping("/history")
-	public String historyPage(Model model) {
+	public String historyPage(
+			@RequestParam(required = false, defaultValue = "") String q,
+			@RequestParam(required = false, defaultValue = "ALL") String cat,
+			Model model) {
 		User user = getCurrentUser();
-		List<LogAnalysis> history = logAnalysisService.getUserHistory(user.getId());
+		List<LogAnalysis> list = logAnalysisService.getHistory(user.getId(), q, cat);
+
+		// 构建紧凑列表项：createdAt、title、errorCategory、summary
+		List<Map<String, Object>> history = new java.util.ArrayList<>();
+		for (LogAnalysis item : list) {
+			Map<String, Object> row = new HashMap<>();
+			row.put("id", item.getId());
+			row.put("title", item.getTitle());
+			row.put("createdAt", item.getCreatedAt());
+			String ec = item.getErrorCategory();
+			row.put("errorCategory", ec != null ? ec : "CONFIG");
+			row.put("summary", getSummaryForHistory(item));
+			history.add(row);
+		}
+
 		model.addAttribute("history", history);
+		model.addAttribute("q", q != null ? q : "");
+		model.addAttribute("cat", cat != null ? cat : "ALL");
 		return "history";
+	}
+
+	/** 取第一条 topCause 的 cause，否则 tldr，否则 "No summary" */
+	private String getSummaryForHistory(LogAnalysis item) {
+		try {
+			if (item.getTopCauses() != null && !item.getTopCauses().isEmpty()) {
+				@SuppressWarnings("unchecked")
+				List<Map<String, Object>> causes = objectMapper.readValue(item.getTopCauses(), List.class);
+				if (!causes.isEmpty() && causes.get(0).get("cause") != null) {
+					return String.valueOf(causes.get(0).get("cause"));
+				}
+			}
+		} catch (Exception e) {
+			// ignore
+		}
+		if (item.getTldr() != null && !item.getTldr().isEmpty()) {
+			return item.getTldr().length() > 120 ? item.getTldr().substring(0, 120) + "…" : item.getTldr();
+		}
+		return "No summary";
 	}
 
 	/**

@@ -19,18 +19,48 @@
 
 		<h1>分析历史</h1>
 
-		<div th:if="${history == null || history.isEmpty()}">
+		<!-- 搜索 + 分类筛选 -->
+		<div class="history-toolbar">
+			<form th:action="@{/history}" method="get" class="history-search-form">
+				<input type="hidden" name="cat" th:value="${cat}">
+				<input type="text" name="q" th:value="${q}" placeholder="搜索标题或日志内容…" class="history-search-input">
+				<button type="submit" class="btn btn-secondary">搜索</button>
+			</form>
+			<div class="history-filter-chips">
+				<a th:href="@{/history(q=${q}, cat='ALL')}" 
+					class="filter-chip" 
+					th:classappend="${cat == 'ALL'} ? 'filter-chip-active' : ''">全部</a>
+				<a th:href="@{/history(q=${q}, cat='NPE')}" 
+					class="filter-chip" 
+					th:classappend="${cat == 'NPE'} ? 'filter-chip-active' : ''">🔴 NPE</a>
+				<a th:href="@{/history(q=${q}, cat='BEAN')}" 
+					class="filter-chip" 
+					th:classappend="${cat == 'BEAN'} ? 'filter-chip-active' : ''">🫘 BEAN</a>
+				<a th:href="@{/history(q=${q}, cat='PORT')}" 
+					class="filter-chip" 
+					th:classappend="${cat == 'PORT'} ? 'filter-chip-active' : ''">🔌 PORT</a>
+				<a th:href="@{/history(q=${q}, cat='SQL')}" 
+					class="filter-chip" 
+					th:classappend="${cat == 'SQL'} ? 'filter-chip-active' : ''">🗄 SQL</a>
+				<a th:href="@{/history(q=${q}, cat='CONFIG')}" 
+					class="filter-chip" 
+					th:classappend="${cat == 'CONFIG'} ? 'filter-chip-active' : ''">⚙ CONFIG</a>
+			</div>
+		</div>
+
+		<div th:if="${history == null || history.isEmpty()}" class="history-empty">
 			<p>暂无分析记录</p>
 			<p><a th:href="@{/analyze}" class="btn">开始分析</a></p>
 		</div>
 
-		<ul th:if="${history != null && !history.isEmpty()}" class="history-list">
-			<li th:each="item : ${history}" class="history-item">
-				<a th:href="@{/report/{id}(id=${item.id})}" th:text="${item.title}">报告标题</a>
-				<div class="history-meta">
-					<span th:text="${item.logType}">类型</span> | 
-					<span th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}">时间</span>
+		<ul th:if="${history != null && !history.isEmpty()}" class="history-list history-list-compact">
+			<li th:each="item : ${history}" class="history-item history-item-compact">
+				<div class="history-item-main">
+					<span class="history-item-time" th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm')}">时间</span>
+					<a th:href="@{/report/{id}(id=${item.id})}" class="history-item-title" th:text="${item.title}">标题</a>
+					<span class="history-item-badge" th:classappend="'cat-' + ${item.errorCategory}" th:text="${item.errorCategory}">CONFIG</span>
 				</div>
+				<div class="history-item-summary" th:text="${item.summary}">摘要</div>
 			</li>
 		</ul>
 	</div>

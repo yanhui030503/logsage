@@ -49,6 +49,9 @@ public class LogAnalysis {
 	@Column(name = "tried", columnDefinition = "TEXT")
 	private String tried; // 用户已尝试过的排查步骤
 
+	@Column(name = "error_category", length = 20)
+	private String errorCategory; // 错误分类：NPE, BEAN, PORT, SQL, CONFIG
+
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 
@@ -159,6 +162,14 @@ public class LogAnalysis {
 
 	public void setTried(String tried) {
 		this.tried = tried;
+	}
+
+	public String getErrorCategory() {
+		return errorCategory;
+	}
+
+	public void setErrorCategory(String errorCategory) {
+		this.errorCategory = errorCategory;
 	}
 
 	public LocalDateTime getCreatedAt() {
