@@ -36,8 +36,8 @@
 					<div class="form-group">
 						<label for="logType">日志类型：</label>
 						<select id="logType" name="logType" required>
-							<option value="JAVA">JAVA</option>
-							<option value="SPRING">SPRING</option>
+							<option value="JAVA" th:selected="${defaultType == 'JAVA'}">JAVA</option>
+							<option value="SPRING" th:selected="${defaultType == 'SPRING'}">SPRING</option>
 						</select>
 					</div>
 				</div>

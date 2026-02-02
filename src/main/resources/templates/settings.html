@@ -29,22 +29,33 @@
 				<strong>今日已用：</strong><span th:text="${usage.used}">0</span> 次<br>
 				<strong>剩余次数：</strong><span th:text="${usage.remaining}">20</span> 次
 			</p>
+			<p class="usage-info-note">
+				<strong>缓存与扣次：</strong>当「日志内容 + 日志类型 + 选项」相同且未填写「已尝试的排查步骤」时，会命中缓存并直接返回已有报告，<strong>不扣当日次数</strong>；填写了「已尝试步骤」或内容不同则会重新分析并扣 1 次。
+			</p>
 		</div>
 
-		<!-- 默认选项设置 -->
-		<h2>默认选项</h2>
+		<!-- 默认选项设置（分析页默认值） -->
+		<h2>分析页默认选项</h2>
 		<form th:action="@{/settings/update}" method="post">
+			<div class="form-group">
+				<label for="defaultType">默认日志类型：</label>
+				<select id="defaultType" name="defaultType">
+					<option value="JAVA" th:selected="${user.defaultType == null || user.defaultType == 'JAVA'}">JAVA</option>
+					<option value="SPRING" th:selected="${user.defaultType == 'SPRING'}">SPRING</option>
+				</select>
+			</div>
 			<div class="form-group">
 				<label>
 					<input type="checkbox" name="defaultSanitize" value="true" 
 						th:checked="${user.defaultSanitize != null ? user.defaultSanitize : true}">
-						默认启用自动脱敏
+					<input type="hidden" name="defaultSanitize" value="false">
+					默认启用自动脱敏
 				</label>
 			</div>
 			<div class="form-group">
 				<label for="defaultDepth">默认输出深度：</label>
 				<select id="defaultDepth" name="defaultDepth">
-					<option value="FAST" th:selected="${user.defaultDepth == 'FAST'}">FAST</option>
+					<option value="FAST" th:selected="${user.defaultDepth == null || user.defaultDepth == 'FAST'}">FAST</option>
 					<option value="DEEP" th:selected="${user.defaultDepth == 'DEEP'}">DEEP</option>
 				</select>
 			</div>

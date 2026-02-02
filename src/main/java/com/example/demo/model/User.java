@@ -22,7 +22,10 @@ public class User {
 	@Column(name = "created_at")
 	private LocalDateTime createdAt;
 
-	// 默认选项
+	// 默认选项（分析页默认值）
+	@Column(name = "default_type", length = 20)
+	private String defaultType = "JAVA"; // JAVA 或 SPRING
+
 	@Column(name = "default_sanitize")
 	private Boolean defaultSanitize = true;
 
@@ -71,6 +74,14 @@ public class User {
 
 	public void setCreatedAt(LocalDateTime createdAt) {
 		this.createdAt = createdAt;
+	}
+
+	public String getDefaultType() {
+		return defaultType;
+	}
+
+	public void setDefaultType(String defaultType) {
+		this.defaultType = defaultType;
 	}
 
 	public Boolean getDefaultSanitize() {

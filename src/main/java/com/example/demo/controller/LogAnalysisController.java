@@ -51,8 +51,9 @@ public class LogAnalysisController {
 		User user = getCurrentUser();
 		Map<String, Object> usage = logAnalysisService.getDailyUsage(user.getId());
 		model.addAttribute("usage", usage);
+		model.addAttribute("defaultType", user.getDefaultType() != null ? user.getDefaultType() : "JAVA");
 		model.addAttribute("defaultSanitize", user.getDefaultSanitize());
-		model.addAttribute("defaultDepth", user.getDefaultDepth());
+		model.addAttribute("defaultDepth", user.getDefaultDepth() != null ? user.getDefaultDepth() : "FAST");
 		return "analyze";
 	}
 
@@ -75,8 +76,9 @@ public class LogAnalysisController {
 				model.addAttribute("error", "日志长度超过 8000 字符限制");
 				Map<String, Object> usage = logAnalysisService.getDailyUsage(user.getId());
 				model.addAttribute("usage", usage);
+				model.addAttribute("defaultType", user.getDefaultType() != null ? user.getDefaultType() : "JAVA");
 				model.addAttribute("defaultSanitize", user.getDefaultSanitize());
-				model.addAttribute("defaultDepth", user.getDefaultDepth());
+				model.addAttribute("defaultDepth", user.getDefaultDepth() != null ? user.getDefaultDepth() : "FAST");
 				return "analyze";
 			}
 
@@ -111,16 +113,18 @@ public class LogAnalysisController {
 			// 更新使用情况
 			Map<String, Object> usage = logAnalysisService.getDailyUsage(user.getId());
 			model.addAttribute("usage", usage);
+			model.addAttribute("defaultType", user.getDefaultType() != null ? user.getDefaultType() : "JAVA");
 			model.addAttribute("defaultSanitize", user.getDefaultSanitize());
-			model.addAttribute("defaultDepth", user.getDefaultDepth());
+			model.addAttribute("defaultDepth", user.getDefaultDepth() != null ? user.getDefaultDepth() : "FAST");
 
 			return "analyze";
 		} catch (Exception e) {
 			model.addAttribute("error", e.getMessage());
 			Map<String, Object> usage = logAnalysisService.getDailyUsage(user.getId());
 			model.addAttribute("usage", usage);
+			model.addAttribute("defaultType", user.getDefaultType() != null ? user.getDefaultType() : "JAVA");
 			model.addAttribute("defaultSanitize", user.getDefaultSanitize());
-			model.addAttribute("defaultDepth", user.getDefaultDepth());
+			model.addAttribute("defaultDepth", user.getDefaultDepth() != null ? user.getDefaultDepth() : "FAST");
 			return "analyze";
 		}
 	}
@@ -224,10 +228,11 @@ public class LogAnalysisController {
 	 * 更新设置
 	 */
 	@PostMapping("/settings/update")
-	public String updateSettings(@RequestParam(required = false) Boolean defaultSanitize,
+	public String updateSettings(@RequestParam(required = false) String defaultType,
+			@RequestParam(required = false) Boolean defaultSanitize,
 			@RequestParam(required = false) String defaultDepth) {
 		User user = getCurrentUser();
-		userService.updateUserSettings(user.getId(), defaultSanitize, defaultDepth);
+		userService.updateUserSettings(user.getId(), defaultType, defaultSanitize, defaultDepth);
 		return "redirect:/settings?updated=true";
 	}
 }

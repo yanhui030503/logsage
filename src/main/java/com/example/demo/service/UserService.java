@@ -47,15 +47,18 @@ public class UserService {
 	}
 
 	/**
-	 * 更新用户默认设置
+	 * 更新用户默认设置（分析页偏好）
 	 */
-	public User updateUserSettings(Long userId, Boolean defaultSanitize, String defaultDepth) {
+	public User updateUserSettings(Long userId, String defaultType, Boolean defaultSanitize, String defaultDepth) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new RuntimeException("用户不存在"));
+		if (defaultType != null && (defaultType.equals("JAVA") || defaultType.equals("SPRING"))) {
+			user.setDefaultType(defaultType);
+		}
 		if (defaultSanitize != null) {
 			user.setDefaultSanitize(defaultSanitize);
 		}
-		if (defaultDepth != null) {
+		if (defaultDepth != null && (defaultDepth.equals("FAST") || defaultDepth.equals("DEEP"))) {
 			user.setDefaultDepth(defaultDepth);
 		}
 		return userRepository.save(user);
