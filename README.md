@@ -8,6 +8,9 @@ LogSage 是一个日志分析工具，帮助开发者快速定位和解决 Java/
 
 > **当前状态**: MVP + 持续迭代中
 
+### 更新记录
+- v0.1.x：新增 /settings 用户默认偏好（默认日志类型/输出深度/脱敏），/analyze 自动回填默认值
+
 ## Features
 
 ### ✅ 已实现
@@ -29,6 +32,11 @@ LogSage 是一个日志分析工具，帮助开发者快速定位和解决 Java/
   - Top Causes 卡片（带置信度进度条）
   - 可勾选验证步骤清单（状态保存到本地）
   - 一键复制命令按钮
+- **设置页 /settings**：支持保存用户默认偏好（defaultType / defaultDepth / defaultSanitize）
+  - defaultType：默认日志类型（如 JAVA / SPRING）
+  - defaultDepth：默认输出深度（FAST / DEEP）
+  - defaultSanitize：默认是否开启脱敏
+  - /analyze 会自动读取并回填这些默认值，提交分析时以用户设置为默认参数
 
 ### 🚧 计划中
 
